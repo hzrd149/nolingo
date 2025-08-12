@@ -53,7 +53,7 @@ export default function Drawer({ children }: DrawerProps) {
         </div>
 
         {/* Main content */}
-        <main className="flex-1 p-4">{children}</main>
+        <main className="flex-1 p-0 sm:p-4">{children}</main>
       </div>
 
       {/* Side drawer */}
@@ -103,7 +103,7 @@ export default function Drawer({ children }: DrawerProps) {
                   </div>
                   <button
                     onClick={() => signOut()}
-                    className="btn btn-ghost btn-sm"
+                    className="btn btn-ghost"
                     title="Sign out"
                   >
                     <svg
@@ -138,7 +138,7 @@ export default function Drawer({ children }: DrawerProps) {
                 <p className="text-sm text-base-content/70 mb-3">
                   Not signed in
                 </p>
-                <Link href="/login" className="btn btn-primary btn-sm w-full">
+                <Link href="/login" className="btn btn-primary w-full">
                   Sign In
                 </Link>
               </div>
@@ -160,12 +160,6 @@ export default function Drawer({ children }: DrawerProps) {
               <Link href="/" onClick={() => setIsDrawerOpen(false)}>
                 <span className="text-lg">🏠</span>
                 Home
-              </Link>
-            </li>
-            <li>
-              <Link href="/profile" onClick={() => setIsDrawerOpen(false)}>
-                <span className="text-lg">👤</span>
-                Profile
               </Link>
             </li>
             <li>

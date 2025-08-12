@@ -14,9 +14,8 @@ export default async function handler(
   try {
     const postId = parseInt(req.query.id as string);
 
-    if (isNaN(postId)) {
+    if (isNaN(postId))
       return res.status(400).json({ error: "Invalid post ID" });
-    }
 
     // Get user session to determine target language
     const session = await getServerSession(req, res, authOptions);

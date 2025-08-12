@@ -1,6 +1,6 @@
 import { db } from "@/database";
-import { replies, users, replyTranslations } from "@/database/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { replies, replyTranslations, users } from "@/database/schema";
+import { and, asc, eq } from "drizzle-orm";
 import { translateText } from "./translate-utils";
 
 export interface ReplyWithTranslation {
@@ -62,7 +62,7 @@ export async function getRepliesWithTranslations(
         ),
       )
       .where(eq(replies.post_id, postId))
-      .orderBy(desc(replies.created_at));
+      .orderBy(asc(replies.created_at));
 
     // Use a Map to deduplicate replies by ID
     const repliesMap = new Map<number, ReplyWithTranslation>();

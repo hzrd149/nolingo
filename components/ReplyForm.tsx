@@ -54,78 +54,74 @@ export default function ReplyForm({ postId, onReplyCreated }: ReplyFormProps) {
 
   if (!session) {
     return (
-      <div className="card bg-base-100 border border-base-300 mt-6">
-        <div className="card-body p-4 text-center">
-          <p className="text-base-content/60">
-            <a href="/login" className="link link-primary">
-              Sign in
-            </a>{" "}
-            to reply to this post
-          </p>
-        </div>
+      <div className="mt-6 px-1 py-4 text-center border-t border-base-300">
+        <p className="text-base-content/60 text-sm">
+          <a href="/login" className="link link-primary">
+            Sign in
+          </a>{" "}
+          to reply to this post
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="card bg-base-100 border border-base-300 mt-6">
-      <div className="card-body p-4">
-        <h3 className="font-semibold text-base-content mb-3">Write a reply</h3>
+    <div className="px-1 py-4">
+      <h3 className="font-medium text-base-content mb-3">Write a reply</h3>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="form-control">
-            <textarea
-              className="textarea textarea-bordered w-full min-h-24 resize-none"
-              placeholder={`Write your reply in ${session.user?.learning_language?.toUpperCase() || "your learning language"}...`}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              disabled={isSubmitting}
-              maxLength={256}
-            />
-            <div className="label">
-              <span className="label-text-alt text-base-content/60">
-                {content.length}/256 characters
-              </span>
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="form-control">
+          <textarea
+            className="textarea textarea-bordered w-full min-h-24 resize-none"
+            placeholder={`Write your reply in ${session.user?.learning_language?.toUpperCase() || "your learning language"}...`}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            disabled={isSubmitting}
+            maxLength={256}
+          />
+          <div className="label">
+            <span className="label-text-alt text-base-content/60">
+              {content.length}/256 characters
+            </span>
           </div>
+        </div>
 
-          {error && (
-            <div className="alert alert-error">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="stroke-current shrink-0 h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{error}</span>
-            </div>
-          )}
-
-          <div className="card-actions justify-end">
-            <button
-              type="submit"
-              className={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
-              disabled={isSubmitting || !content.trim()}
+        {error && (
+          <div className="alert alert-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="stroke-current shrink-0 h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
             >
-              {isSubmitting ? (
-                <>
-                  <span className="loading loading-spinner loading-xs"></span>
-                  Posting...
-                </>
-              ) : (
-                "Post Reply"
-              )}
-            </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{error}</span>
           </div>
-        </form>
-      </div>
+        )}
+
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
+            disabled={isSubmitting || !content.trim()}
+          >
+            {isSubmitting ? (
+              <>
+                <span className="loading loading-spinner loading-xs"></span>
+                Posting...
+              </>
+            ) : (
+              "Post Reply"
+            )}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

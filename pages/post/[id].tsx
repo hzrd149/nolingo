@@ -119,13 +119,10 @@ export default function PostPage({ post, initialReplies }: PostPageProps) {
 
   return (
     <div className="min-h-screen bg-base-100">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 max-w-4xl pb-10">
         {/* Back button */}
-        <div className="mb-6">
-          <button
-            onClick={() => router.back()}
-            className="btn btn-ghost btn-sm"
-          >
+        <div className="mb-4 sm:mb-6 px-2 sm:px-0">
+          <button onClick={() => router.back()} className="btn btn-ghost">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4 mr-2"
@@ -145,88 +142,64 @@ export default function PostPage({ post, initialReplies }: PostPageProps) {
         </div>
 
         {/* Post content */}
-        <div className="card bg-base-100 shadow-lg">
-          {/* Post Image */}
-          <div className="relative">
+        <div className="bg-base-100 mb-6">
+          {/* Post Image - Full width */}
+          <div className="relative mb-4">
             <img
               src={post.picture.original_url}
               alt="Post image"
-              className="w-full h-auto max-h-[70vh] object-contain bg-base-200"
+              className="w-full h-auto max-h-[70vh] object-contain bg-base-200 rounded-lg"
             />
             {/* Language Badge */}
-            <div className="absolute top-4 right-4">
-              <div className="badge badge-primary badge-lg">
+            <div className="absolute top-2 right-2">
+              <div className="badge badge-primary">
                 {getLanguageName(post.language)}
               </div>
             </div>
           </div>
 
-          <div className="card-body p-6">
-            {/* User Info */}
-            <div className="flex items-center gap-4 mb-6">
-              <div className="avatar">
-                <div className="w-16 h-16 rounded-full bg-primary text-primary-content flex items-center justify-center text-xl font-semibold">
-                  {post.author.display_name?.[0]?.toUpperCase() ||
-                    post.author.username[0]?.toUpperCase() ||
-                    "?"}
-                </div>
-              </div>
-              <div className="flex-1">
-                <h2 className="text-xl font-semibold text-base-content">
-                  {post.author.display_name || post.author.username}
-                </h2>
-                <p className="text-sm text-base-content/60">
-                  @{post.author.username}
-                </p>
-                <p className="text-sm text-base-content/60">
-                  {formatDate(post.created_at)}
-                </p>
+          {/* User Info */}
+          <div className="flex items-center gap-3 mb-4 px-1">
+            <div className="avatar">
+              <div className="w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center text-lg font-semibold">
+                {post.author.display_name?.[0]?.toUpperCase() ||
+                  post.author.username[0]?.toUpperCase() ||
+                  "?"}
               </div>
             </div>
-
-            {/* Post Content */}
-            <div className="mb-6 space-y-4">
-              <p className="text-lg text-base-content leading-relaxed">
-                {post.translation?.content || post.content}
+            <div className="flex-1">
+              <h2 className="font-semibold text-base-content">
+                {post.author.display_name || post.author.username}
+              </h2>
+              <p className="text-sm text-base-content/60">
+                @{post.author.username} • {formatDate(post.created_at)}
               </p>
-
-              {post.translation && (
-                <div className="border-l-4 border-primary pl-4 bg-base-200/50 p-4 rounded">
-                  <p className="text-base-content leading-relaxed">
-                    {post.content}
-                  </p>
-                  {post.translation && (
-                    <p className="text-xs text-base-content/60 mt-2">
-                      Original {getLanguageName(post.language)}
-                    </p>
-                  )}
-                </div>
-              )}
             </div>
+          </div>
 
-            {/* Post Actions */}
-            <div className="card-actions justify-between items-center">
-              <span className="text-sm text-base-content/60">
-                {replies.length} {replies.length === 1 ? "reply" : "replies"}
-              </span>
-              <button className="btn btn-ghost btn-lg">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
-                </svg>
-                Reply
-              </button>
-            </div>
+          {/* Post Content */}
+          <div className="mb-4 space-y-4 px-1">
+            <p className="text-base-content leading-relaxed">
+              {post.translation?.content || post.content}
+            </p>
+
+            {post.translation && (
+              <div className="border-l-4 border-primary pl-3 bg-base-200/50 p-3 rounded-r">
+                <p className="text-base-content/80 leading-relaxed text-sm">
+                  {post.content}
+                </p>
+                <p className="text-xs text-base-content/60 mt-2">
+                  Original {getLanguageName(post.language)}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Post Actions */}
+          <div className="flex justify-between items-center px-1 pb-4 border-b border-base-300">
+            <span className="text-sm text-base-content/60">
+              {replies.length} {replies.length === 1 ? "reply" : "replies"}
+            </span>
           </div>
         </div>
 
@@ -234,7 +207,7 @@ export default function PostPage({ post, initialReplies }: PostPageProps) {
         <ReplyForm postId={post.id} onReplyCreated={handleReplyCreated} />
 
         {/* Replies Section */}
-        <div className="mt-8">
+        <div>
           <h2 className="text-xl font-semibold text-base-content mb-4">
             Replies{" "}
             {isLoadingReplies && (
@@ -282,9 +255,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       context.res,
       authOptions,
     );
-    
+
     const targetLanguage = session?.user?.learning_language || "en";
-    
+
     const [post, replies] = await Promise.all([
       getPostWithTranslation(postId, targetLanguage),
       getRepliesWithTranslations(postId, targetLanguage),

@@ -80,19 +80,15 @@ export default function Posts() {
         <title>Posts - Nolingo</title>
       </Head>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 max-w-4xl">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-base-content">Posts</h1>
-            <p className="text-base-content/70 mt-2">
-              Practice your language skills with posts from the community
-            </p>
-          </div>
-
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 px-2 sm:px-0 gap-4 sm:gap-0">
+          <div className="flex items-center gap-4 w-full sm:w-auto">
             {status === "authenticated" && (
-              <Link href="/post/new" className="btn btn-primary">
+              <Link
+                href="/post/new"
+                className="btn btn-lg btn-primary w-full sm:w-auto"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-2"
@@ -171,7 +167,7 @@ export default function Posts() {
             )}
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
             {posts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}
