@@ -6,7 +6,6 @@ export const pictures = sqliteTable(
     id: int("id").primaryKey({ autoIncrement: true }),
     original_url: text("original_url").notNull(), // Full resolution image URL
     thumbnail_url: text("thumbnail_url").notNull(), // Thumbnail image URL
-    alt_text: text("alt_text"), // Accessibility description
     file_size: int("file_size"), // File size in bytes
     width: int("width"), // Image width in pixels
     height: int("height"), // Image height in pixels

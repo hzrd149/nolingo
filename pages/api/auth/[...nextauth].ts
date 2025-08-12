@@ -76,6 +76,7 @@ export const authOptions: NextAuthOptions = {
         token.display_name = user.display_name;
         token.learning_language = user.learning_language;
         token.theme = user.theme;
+        token.userId = user.id;
       }
       return token;
     },
@@ -85,6 +86,7 @@ export const authOptions: NextAuthOptions = {
         session.user.display_name = token.display_name;
         session.user.learning_language = token.learning_language;
         session.user.theme = token.theme;
+        session.user.id = token.userId;
       }
       return session;
     },

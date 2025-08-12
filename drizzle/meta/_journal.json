@@ -15,6 +15,13 @@
       "when": 1754967370787,
       "tag": "0001_unique_makkari",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1754972048711,
+      "tag": "0002_chubby_mojo",
+      "breakpoints": true
     }
   ]
 }

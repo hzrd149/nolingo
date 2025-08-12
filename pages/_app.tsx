@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 
 import "./globals.css";
 import ThemeProvider from "../components/ThemeProvider";
+import Drawer from "../components/Drawer";
 
 export default function App({
   Component,
@@ -11,7 +12,9 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <ThemeProvider>
-        <Component {...pageProps} />
+        <Drawer>
+          <Component {...pageProps} />
+        </Drawer>
       </ThemeProvider>
     </SessionProvider>
   );

@@ -15,12 +15,6 @@ export default function Drawer({ children }: DrawerProps) {
 
   const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
 
-  const navigationItems = [
-    { href: "/", label: "Home", icon: "🏠" },
-    { href: "/profile", label: "Profile", icon: "👤" },
-    { href: "/settings", label: "Settings", icon: "⚙️" },
-  ];
-
   return (
     <div className="drawer lg:drawer-open">
       <input
@@ -154,25 +148,35 @@ export default function Drawer({ children }: DrawerProps) {
           </div>
 
           {/* Navigation */}
-          <div className="p-4">
-            <h3 className="text-sm font-semibold text-base-content/70 mb-3 uppercase tracking-wider">
-              Navigation
-            </h3>
-            <ul className="menu menu-md">
-              {navigationItems.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="flex items-center gap-3 hover:bg-base-300 rounded-lg"
-                    onClick={() => setIsDrawerOpen(false)}
-                  >
-                    <span className="text-lg">{item.icon}</span>
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <h3 className="text-sm font-semibold text-base-content/70 uppercase tracking-wider p-4">
+            Navigation
+          </h3>
+          <ul className="menu menu-md w-full space-y-2">
+            <li>
+              <Link href="/posts/new" onClick={() => setIsDrawerOpen(false)}>
+                <span className="text-lg">✏️</span>
+                New Post
+              </Link>
+            </li>
+            <li>
+              <Link href="/" onClick={() => setIsDrawerOpen(false)}>
+                <span className="text-lg">🏠</span>
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link href="/profile" onClick={() => setIsDrawerOpen(false)}>
+                <span className="text-lg">👤</span>
+                Profile
+              </Link>
+            </li>
+            <li>
+              <Link href="/settings" onClick={() => setIsDrawerOpen(false)}>
+                <span className="text-lg">⚙️</span>
+                Settings
+              </Link>
+            </li>
+          </ul>
 
           {/* Footer */}
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-base-300">
