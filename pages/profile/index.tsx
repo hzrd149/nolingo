@@ -1,14 +1,13 @@
+import { useSessionData } from "@/lib/hooks/useSessionData";
+import { useUserProfile } from "@/lib/hooks/useUserProfile";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import Drawer from "@/components/Drawer";
-import { useUserProfile } from "@/lib/hooks/useUserProfile";
-import { useSessionData } from "@/lib/hooks/useSessionData";
 
 export default function Profile() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const { profile, isLoading, error } = useUserProfile();
-  const { displayName, learningLanguage, theme } = useSessionData();
+  const { displayName, learningLanguage } = useSessionData();
 
   if (status === "loading" || isLoading) {
     return (
@@ -117,17 +116,6 @@ export default function Profile() {
                       {learningLanguage ||
                         profile.learning_language ||
                         "Not set"}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="label">
-                      <span className="label-text font-semibold">Theme</span>
-                    </label>
-                    <p className="text-base-content/70">
-                      {theme
-                        ? theme.charAt(0).toUpperCase() + theme.slice(1)
-                        : "Default"}
                     </p>
                   </div>
 

@@ -29,7 +29,6 @@ export default async function handler(
         display_name: users.display_name,
         about: users.about,
         picture_id: users.picture_id,
-        theme: users.theme,
         location: users.location,
         website: users.website,
         learning_language: users.learning_language,

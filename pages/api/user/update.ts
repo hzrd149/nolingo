@@ -21,7 +21,7 @@ export default async function handler(
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const { display_name, about, location, website, learning_language, theme } =
+    const { display_name, about, location, website, learning_language } =
       req.body;
 
     // Validate required fields
@@ -30,8 +30,7 @@ export default async function handler(
       !about &&
       !location &&
       !website &&
-      !learning_language &&
-      !theme
+      !learning_language
     ) {
       return res
         .status(400)
@@ -47,7 +46,6 @@ export default async function handler(
     if (website !== undefined) updateData.website = website;
     if (learning_language !== undefined)
       updateData.learning_language = learning_language;
-    if (theme !== undefined) updateData.theme = theme;
 
     // Add updated_at timestamp
     updateData.updated_at = new Date().toISOString();

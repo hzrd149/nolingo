@@ -7,7 +7,6 @@ export function useSessionData() {
     // Essential user data from session
     displayName: session?.user?.display_name,
     learningLanguage: session?.user?.learning_language,
-    theme: session?.user?.theme || "light",
     username: session?.user?.username,
 
     // Session status

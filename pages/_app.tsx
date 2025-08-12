@@ -2,7 +2,6 @@ import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 
 import "./globals.css";
-import ThemeProvider from "../components/ThemeProvider";
 import Drawer from "../components/Drawer";
 
 export default function App({
@@ -11,11 +10,9 @@ export default function App({
 }: AppProps) {
   return (
     <SessionProvider session={session}>
-      <ThemeProvider>
-        <Drawer>
-          <Component {...pageProps} />
-        </Drawer>
-      </ThemeProvider>
+      <Drawer>
+        <Component {...pageProps} />
+      </Drawer>
     </SessionProvider>
   );
 }

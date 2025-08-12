@@ -1,11 +1,12 @@
 import { db } from "@/database";
-import { pictures, posts } from "@/database/schema";
+import { pictures, posts, users } from "@/database/schema";
 import { detectLanguage } from "@/lib/translate";
 import { eq } from "drizzle-orm";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { z } from "zod";
 import { authOptions } from "../auth/[...nextauth]";
+import { sendNewPostNotification } from "@/lib/notification-server/push-notifications";
 
 // Validation schema for new post
 const createPostSchema = z.object({
@@ -96,6 +97,30 @@ export default async function handler(
         updated_at: new Date().toISOString(),
       })
       .returning();
+
+    // Get author information for notification
+    const authorInfo = await db
+      .select({
+        display_name: users.display_name,
+        username: users.username,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    const authorName =
+      authorInfo[0]?.display_name || authorInfo[0]?.username || "Unknown";
+
+    // Send push notifications for new post (async, don't wait for completion)
+    sendNewPostNotification(
+      newPost[0].id,
+      authorName,
+      content,
+      detectedLanguage,
+    ).catch((error) => {
+      console.error("Failed to send new post notification:", error);
+      // Don't fail the request if notification fails
+    });
 
     return res.status(201).json({
       message: "Post created successfully",

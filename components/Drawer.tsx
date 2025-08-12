@@ -1,5 +1,3 @@
-"use client";
-
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -177,14 +175,6 @@ export default function Drawer({ children }: DrawerProps) {
               </Link>
             </li>
           </ul>
-
-          {/* Footer */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-base-300">
-            <div className="text-center text-xs text-base-content/50">
-              <p>© 2024 Nolingo</p>
-              <p>Learn languages together</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,10 @@
-import { int, sqliteTable, text, index } from "drizzle-orm/sqlite-core";
+import {
+  int,
+  sqliteTable,
+  text,
+  index,
+  integer,
+} from "drizzle-orm/sqlite-core";
 
 export const pictures = sqliteTable(
   "pictures",
@@ -27,7 +33,6 @@ export const users = sqliteTable(
     password: text("password").notNull(), // Hashed password
     about: text("about"), // Bio/description
     picture_id: int("picture_id").references(() => pictures.id), // Profile picture reference
-    theme: text("theme"), // The name of a built-in DaisyUI theme
     custom_css: text("custom_css"), // User's custom CSS
     display_name: text("display_name"), // Full name for display
     location: text("location"), // User's location
@@ -79,4 +84,70 @@ export const translations = sqliteTable(
     index("translations_post_id_idx").on(table.post_id),
     index("translations_language_idx").on(table.language),
   ],
+);
+
+export const replies = sqliteTable(
+  "replies",
+  {
+    id: int("id").primaryKey({ autoIncrement: true }),
+    post_id: int("post_id")
+      .notNull()
+      .references(() => posts.id),
+    author: int("author")
+      .notNull()
+      .references(() => users.id),
+    content: text("content").notNull(), // Reply content (256 char limit enforced in app)
+    language: text("language").notNull(), // ISO 639-1 language code
+    created_at: text("created_at").notNull().default("CURRENT_TIMESTAMP"),
+    updated_at: text("updated_at").notNull().default("CURRENT_TIMESTAMP"),
+  },
+  (table) => [
+    index("replies_post_id_idx").on(table.post_id),
+    index("replies_author_idx").on(table.author),
+    index("replies_created_at_idx").on(table.created_at),
+  ],
+);
+
+export const vapidKeys = sqliteTable("vapid_keys", {
+  id: int("id").primaryKey({ autoIncrement: true }),
+  public_key: text("public_key").notNull().unique(), // VAPID public key
+  private_key: text("private_key").notNull().unique(), // VAPID private key
+  email: text("email").notNull(), // Contact email for VAPID
+  created_at: text("created_at").notNull().default("CURRENT_TIMESTAMP"),
+});
+
+export const pushSubscriptions = sqliteTable(
+  "push_subscriptions",
+  {
+    id: int("id").primaryKey({ autoIncrement: true }),
+    user_id: int("user_id")
+      .notNull()
+      .references(() => users.id),
+    endpoint: text("endpoint").notNull(), // Push service endpoint URL
+    p256dh_key: text("p256dh_key").notNull(), // User's public key for encryption
+    auth_key: text("auth_key").notNull(), // Authentication secret
+    user_agent: text("user_agent"), // Browser/device info for debugging
+    created_at: text("created_at").notNull().default("CURRENT_TIMESTAMP"),
+    updated_at: text("updated_at").notNull().default("CURRENT_TIMESTAMP"),
+  },
+  (table) => [
+    index("push_subscriptions_user_id_idx").on(table.user_id),
+    index("push_subscriptions_endpoint_idx").on(table.endpoint),
+  ],
+);
+
+export const notificationPreferences = sqliteTable(
+  "notification_preferences",
+  {
+    id: int("id").primaryKey({ autoIncrement: true }),
+    user_id: int("user_id")
+      .notNull()
+      .references(() => users.id)
+      .unique(), // One preference record per user
+    new_posts: integer("new_posts").notNull().default(1), // 0 = disabled, 1 = enabled
+    post_replies: integer("post_replies").notNull().default(1), // 0 = disabled, 1 = enabled
+    mentions: integer("mentions").notNull().default(1), // 0 = disabled, 1 = enabled
+    created_at: text("created_at").notNull().default("CURRENT_TIMESTAMP"),
+  },
+  (table) => [index("notification_preferences_user_id_idx").on(table.user_id)],
 );

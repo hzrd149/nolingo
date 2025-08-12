@@ -7,7 +7,6 @@ interface UserProfile {
   display_name?: string;
   about?: string;
   picture_id?: number;
-  theme?: string;
   location?: string;
   website?: string;
   learning_language?: string;
