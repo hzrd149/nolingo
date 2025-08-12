@@ -121,7 +121,7 @@ export default function PostPage({ post, initialReplies }: PostPageProps) {
           {`${post.author.display_name || post.author.username} - ${(post.translation?.content || post.content).slice(0, 16)}...`}
         </title>
       </Head>
-      <div className="min-h-screen bg-base-100">
+      <div className="bg-base-100">
         <div className="container mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 max-w-4xl pb-10">
           {/* Back button */}
           <div className="mb-4 sm:mb-6 px-2 sm:px-0">

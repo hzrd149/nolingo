@@ -56,7 +56,7 @@ export default function PostCard({
       </div>
 
       {/* User Info */}
-      <div className="flex items-center gap-3 mb-3 px-1">
+      <div className="flex items-center gap-3 mb-3 px-2">
         <div className="avatar">
           <div className="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-semibold">
             {post.author.display_name?.[0]?.toUpperCase() ||
@@ -78,12 +78,12 @@ export default function PostCard({
       </div>
 
       {/* Post Content */}
-      <p className="text-base-content/90 leading-relaxed mb-3 px-1">
+      <p className="text-base-content/90 leading-relaxed mb-3 px-2">
         {post.translation?.content || post.content}
       </p>
 
       {/* Post Actions */}
-      <div className="flex justify-between items-center px-1">
+      <div className="flex justify-between items-center px-2">
         {showReplyCount && post.replyCount !== undefined && (
           <span className="text-sm text-base-content/60">
             {post.replyCount} {post.replyCount === 1 ? "reply" : "replies"}
