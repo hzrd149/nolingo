@@ -5,12 +5,14 @@ import { SettingsProvider } from "@/contexts/SettingsContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import SettingsLayout from "@/components/settings/SettingsLayout";
 import ProfileSection from "@/components/settings/ProfileSection";
+import PasswordSection from "@/components/settings/PasswordSection";
 import NotificationSection from "@/components/settings/NotificationSection";
 
 function SettingsContent() {
   return (
     <SettingsLayout>
       <ProfileSection />
+      <PasswordSection />
       <NotificationProvider>
         <NotificationSection />
       </NotificationProvider>
