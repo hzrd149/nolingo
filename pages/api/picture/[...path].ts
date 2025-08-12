@@ -10,15 +10,13 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const filePath = path.join(process.cwd(), "data", "images", filename);
 
   // Check if file exists
-  if (!fs.existsSync(filePath)) {
+  if (!fs.existsSync(filePath))
     return res.status(404).json({ error: "Image not found" });
-  }
 
   // Get file stats to check if it's a file
   const stats = fs.statSync(filePath);
-  if (!stats.isFile()) {
+  if (!stats.isFile())
     return res.status(404).json({ error: "Image not found" });
-  }
 
   // Determine content type based on file extension
   const ext = path.extname(filename).toLowerCase();
