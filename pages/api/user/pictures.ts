@@ -28,7 +28,6 @@ export default async function handler(
         id: pictures.id,
         original_url: pictures.original_url,
         thumbnail_url: pictures.thumbnail_url,
-        alt_text: pictures.alt_text,
         created_at: pictures.created_at,
       })
       .from(pictures)
@@ -38,11 +37,10 @@ export default async function handler(
     return res.status(200).json({
       pictures: userPictures,
     });
-
   } catch (error) {
     console.error("Error fetching user pictures:", error);
-    return res.status(500).json({ 
-      error: "Internal server error" 
+    return res.status(500).json({
+      error: "Internal server error",
     });
   }
-} 
+}

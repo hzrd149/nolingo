@@ -102,7 +102,7 @@ export default function NewPost() {
       }
 
       // Create the post
-      const response = await fetch("/api/posts/new", {
+      const response = await fetch("/api/post/new", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -119,8 +119,8 @@ export default function NewPost() {
         throw new Error(data.error || "Failed to create post");
       }
 
-      // Redirect to the posts page
-      router.push("/posts");
+      // Redirect to the home page
+      router.push("/");
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "An error occurred";

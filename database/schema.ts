@@ -73,16 +73,10 @@ export const translations = sqliteTable(
       .notNull()
       .references(() => posts.id),
     language: text("language").notNull(), // Target language for translation
-    translated_content: text("translated_content").notNull(), // Translated post content
-    translator_id: int("translator_id").references(() => users.id), // User who provided translation (optional)
-    is_verified: int("is_verified").notNull().default(0), // 0 = unverified, 1 = verified
-    created_at: text("created_at").notNull().default("CURRENT_TIMESTAMP"),
-    updated_at: text("updated_at").notNull().default("CURRENT_TIMESTAMP"),
+    content: text("content").notNull(), // Translated post content
   },
   (table) => [
     index("translations_post_id_idx").on(table.post_id),
     index("translations_language_idx").on(table.language),
-    index("translations_translator_idx").on(table.translator_id),
-    index("translations_verified_idx").on(table.is_verified),
   ],
 );

@@ -1,1 +1,0 @@
-ALTER TABLE `pictures` DROP COLUMN `alt_text`;

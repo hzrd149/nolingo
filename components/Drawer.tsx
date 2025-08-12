@@ -153,7 +153,7 @@ export default function Drawer({ children }: DrawerProps) {
           </h3>
           <ul className="menu menu-md w-full space-y-2">
             <li>
-              <Link href="/posts/new" onClick={() => setIsDrawerOpen(false)}>
+              <Link href="/post/new" onClick={() => setIsDrawerOpen(false)}>
                 <span className="text-lg">✏️</span>
                 New Post
               </Link>
