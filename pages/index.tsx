@@ -56,11 +56,9 @@ export default function Posts() {
       }
     };
 
-    // Only fetch posts when we have the user profile or when not authenticated
+    // Only fetch posts when we have the user profile (user is authenticated by middleware)
     if (status === "authenticated" && profile) {
       fetchPosts();
-    } else if (status === "unauthenticated") {
-      fetchPosts(); // Fetch with default language for unauthenticated users
     }
   }, [status, profile]);
 
@@ -84,28 +82,26 @@ export default function Posts() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 px-2 sm:px-0 gap-4 sm:gap-0">
           <div className="flex items-center gap-4 w-full sm:w-auto">
-            {status === "authenticated" && (
-              <Link
-                href="/post/new"
-                className="btn btn-lg btn-primary w-full sm:w-auto"
+            <Link
+              href="/post/new"
+              className="btn btn-lg btn-primary w-full sm:w-auto"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                New Post
-              </Link>
-            )}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              New Post
+            </Link>
           </div>
         </div>
 
@@ -156,15 +152,9 @@ export default function Posts() {
               Be the first to share a post and start practicing your language
               skills!
             </p>
-            {status === "authenticated" ? (
-              <Link href="/post/new" className="btn btn-primary">
-                Create Your First Post
-              </Link>
-            ) : (
-              <Link href="/login" className="btn btn-primary">
-                Sign In to Post
-              </Link>
-            )}
+            <Link href="/post/new" className="btn btn-primary">
+              Create Your First Post
+            </Link>
           </div>
         ) : (
           <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">

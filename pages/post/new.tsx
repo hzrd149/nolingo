@@ -27,14 +27,15 @@ export default function NewPost() {
   const [error, setError] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // Redirect if not authenticated
+  // Show loading state while session is loading
   if (status === "loading") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "unauthenticated") {
-    router.push("/login");
-    return null;
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="flex justify-center items-center h-64">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      </div>
+    );
   }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {

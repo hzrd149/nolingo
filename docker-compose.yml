@@ -9,3 +9,16 @@ services:
       - ./data/translate:/home/libretranslate/.local/share/argos-translate/packages
     ports:
       - 8080:5000
+  nolingo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./data/nolingo:/app/data
+    environment:
+      DATA_DIR: /app/data
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: liasniogoihabuiosksd
+      LIBRETRANSLATE_API: http://libretranslate:5000

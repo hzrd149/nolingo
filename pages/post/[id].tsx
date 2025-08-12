@@ -6,6 +6,8 @@ import { useSession } from "next-auth/react";
 import ReplyCard from "@/components/ReplyCard";
 import ReplyForm from "@/components/ReplyForm";
 import { getRepliesWithTranslations } from "@/lib/replies";
+import { getLanguageName } from "../../lib/utils/language";
+import Head from "next/head";
 
 interface Post {
   id: number;
@@ -89,11 +91,6 @@ export default function PostPage({ post, initialReplies }: PostPageProps) {
     });
   };
 
-  const getLanguageName = (code: string) => {
-    const languageName = ISO6391.getName(code);
-    return languageName || code.toUpperCase();
-  };
-
   if (router.isFallback) {
     return (
       <div className="min-h-screen bg-base-100 flex items-center justify-center">
@@ -118,117 +115,124 @@ export default function PostPage({ post, initialReplies }: PostPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-base-100">
-      <div className="container mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 max-w-4xl pb-10">
-        {/* Back button */}
-        <div className="mb-4 sm:mb-6 px-2 sm:px-0">
-          <button onClick={() => router.back()} className="btn btn-ghost">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
+    <>
+      <Head>
+        <title>
+          {`${post.author.display_name || post.author.username} - ${(post.translation?.content || post.content).slice(0, 16)}...`}
+        </title>
+      </Head>
+      <div className="min-h-screen bg-base-100">
+        <div className="container mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 max-w-4xl pb-10">
+          {/* Back button */}
+          <div className="mb-4 sm:mb-6 px-2 sm:px-0">
+            <button onClick={() => router.back()} className="btn btn-ghost">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Back
+            </button>
+          </div>
+
+          {/* Post content */}
+          <div className="bg-base-100 mb-6">
+            {/* Post Image - Full width */}
+            <div className="relative mb-4">
+              <img
+                src={post.picture.original_url}
+                alt="Post image"
+                className="w-full h-auto max-h-[70vh] object-contain bg-base-200 rounded-lg"
               />
-            </svg>
-            Back
-          </button>
-        </div>
-
-        {/* Post content */}
-        <div className="bg-base-100 mb-6">
-          {/* Post Image - Full width */}
-          <div className="relative mb-4">
-            <img
-              src={post.picture.original_url}
-              alt="Post image"
-              className="w-full h-auto max-h-[70vh] object-contain bg-base-200 rounded-lg"
-            />
-            {/* Language Badge */}
-            <div className="absolute top-2 right-2">
-              <div className="badge badge-primary">
-                {getLanguageName(post.language)}
+              {/* Language Badge */}
+              <div className="absolute top-2 right-2">
+                <div className="badge badge-primary">
+                  {getLanguageName(post.language)}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* User Info */}
-          <div className="flex items-center gap-3 mb-4 px-1">
-            <div className="avatar">
-              <div className="w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center text-lg font-semibold">
-                {post.author.display_name?.[0]?.toUpperCase() ||
-                  post.author.username[0]?.toUpperCase() ||
-                  "?"}
+            {/* User Info */}
+            <div className="flex items-center gap-3 mb-4 px-1">
+              <div className="avatar">
+                <div className="w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center text-lg font-semibold">
+                  {post.author.display_name?.[0]?.toUpperCase() ||
+                    post.author.username[0]?.toUpperCase() ||
+                    "?"}
+                </div>
+              </div>
+              <div className="flex-1">
+                <h2 className="font-semibold text-base-content">
+                  {post.author.display_name || post.author.username}
+                </h2>
+                <p className="text-sm text-base-content/60">
+                  @{post.author.username} • {formatDate(post.created_at)}
+                </p>
               </div>
             </div>
-            <div className="flex-1">
-              <h2 className="font-semibold text-base-content">
-                {post.author.display_name || post.author.username}
-              </h2>
-              <p className="text-sm text-base-content/60">
-                @{post.author.username} • {formatDate(post.created_at)}
+
+            {/* Post Content */}
+            <div className="mb-4 space-y-4 px-1">
+              <p className="text-base-content leading-relaxed">
+                {post.translation?.content || post.content}
               </p>
+
+              {post.translation && (
+                <div className="border-l-4 border-primary pl-3 bg-base-200/50 p-3 rounded-r">
+                  <p className="text-base-content/80 leading-relaxed text-sm">
+                    {post.content}
+                  </p>
+                  <p className="text-xs text-base-content/60 mt-2">
+                    Original {getLanguageName(post.language)}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Post Actions */}
+            <div className="flex justify-between items-center px-1 pb-4 border-b border-base-300">
+              <span className="text-sm text-base-content/60">
+                {replies.length} {replies.length === 1 ? "reply" : "replies"}
+              </span>
             </div>
           </div>
 
-          {/* Post Content */}
-          <div className="mb-4 space-y-4 px-1">
-            <p className="text-base-content leading-relaxed">
-              {post.translation?.content || post.content}
-            </p>
+          {/* Reply Form */}
+          <ReplyForm postId={post.id} onReplyCreated={handleReplyCreated} />
 
-            {post.translation && (
-              <div className="border-l-4 border-primary pl-3 bg-base-200/50 p-3 rounded-r">
-                <p className="text-base-content/80 leading-relaxed text-sm">
-                  {post.content}
-                </p>
-                <p className="text-xs text-base-content/60 mt-2">
-                  Original {getLanguageName(post.language)}
-                </p>
+          {/* Replies Section */}
+          <div>
+            <h2 className="text-xl font-semibold text-base-content mb-4">
+              Replies{" "}
+              {isLoadingReplies && (
+                <span className="loading loading-spinner loading-sm ml-2"></span>
+              )}
+            </h2>
+
+            {replies.length === 0 ? (
+              <div className="text-center text-base-content/60 py-8">
+                <p>No replies yet. Be the first to reply!</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {replies.map((reply) => (
+                  <ReplyCard key={reply.id} reply={reply} />
+                ))}
               </div>
             )}
           </div>
-
-          {/* Post Actions */}
-          <div className="flex justify-between items-center px-1 pb-4 border-b border-base-300">
-            <span className="text-sm text-base-content/60">
-              {replies.length} {replies.length === 1 ? "reply" : "replies"}
-            </span>
-          </div>
-        </div>
-
-        {/* Reply Form */}
-        <ReplyForm postId={post.id} onReplyCreated={handleReplyCreated} />
-
-        {/* Replies Section */}
-        <div>
-          <h2 className="text-xl font-semibold text-base-content mb-4">
-            Replies{" "}
-            {isLoadingReplies && (
-              <span className="loading loading-spinner loading-sm ml-2"></span>
-            )}
-          </h2>
-
-          {replies.length === 0 ? (
-            <div className="text-center text-base-content/60 py-8">
-              <p>No replies yet. Be the first to reply!</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {replies.map((reply) => (
-                <ReplyCard key={reply.id} reply={reply} />
-              ))}
-            </div>
-          )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

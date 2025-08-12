@@ -8,6 +8,7 @@ import {
 } from "@/lib/notification-client";
 import ISO6391 from "iso-639-1";
 import { useSession } from "next-auth/react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -71,14 +72,7 @@ export default function Settings() {
     learning_language: "",
   });
 
-  useEffect(() => {
-    if (status === "loading") return;
-
-    if (status === "unauthenticated") {
-      router.push("/login");
-      return;
-    }
-  }, [session, status, router]);
+  // Remove manual authentication check - middleware handles this now
 
   useEffect(() => {
     if (profile) {
@@ -294,20 +288,21 @@ export default function Settings() {
 
   if (status === "loading" || profileLoading) {
     return (
-      <div className="hero min-h-[calc(100vh-2rem)] bg-base-100">
-        <div className="hero-content text-center">
-          <span className="loading loading-spinner loading-lg"></span>
+      <div className="min-h-[calc(100vh-2rem)] bg-base-100 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-center items-center h-64">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
         </div>
       </div>
     );
   }
 
-  if (status === "unauthenticated") {
-    return null;
-  }
-
   return (
     <div className="min-h-[calc(100vh-2rem)] bg-base-100 p-6">
+      <Head>
+        <title>Settings - Nolingo</title>
+      </Head>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Settings</h1>

@@ -27,11 +27,7 @@ export default function Drawer({ children }: DrawerProps) {
         {/* Top navigation bar for mobile */}
         <div className="w-full navbar bg-base-100 lg:hidden">
           <div className="flex-none">
-            <label
-              htmlFor="main-drawer"
-              className="btn btn-square btn-ghost"
-              onClick={toggleDrawer}
-            >
+            <label htmlFor="main-drawer" className="btn btn-square btn-ghost">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -62,7 +58,6 @@ export default function Drawer({ children }: DrawerProps) {
           htmlFor="main-drawer"
           aria-label="close sidebar"
           className="drawer-overlay"
-          onClick={toggleDrawer}
         ></label>
 
         <div className="min-h-full w-80 bg-base-200 text-base-content">

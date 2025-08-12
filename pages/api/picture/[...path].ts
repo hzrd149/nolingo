@@ -7,7 +7,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const filename = Array.isArray(imagePath) ? imagePath.join("/") : imagePath;
   if (!filename) return res.status(404).json({ error: "Image not found" });
 
-  const filePath = path.join(process.cwd(), "data", "images", filename);
+  const DATA_DIR = process.env.DATA_DIR || "./data";
+
+  const filePath = path.join(DATA_DIR, "images", filename);
 
   // Check if file exists
   if (!fs.existsSync(filePath))

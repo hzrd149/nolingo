@@ -4,9 +4,11 @@ import formidable from "formidable";
 import fs from "fs";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
-import path from "path";
+import path, { join } from "path";
 import sharp from "sharp";
 import { authOptions } from "../auth/[...nextauth]";
+
+const DATA_DIR = process.env.DATA_DIR || "./data";
 
 export const config = {
   api: {
@@ -29,7 +31,7 @@ export default async function handler(
   }
 
   const form = formidable({
-    uploadDir: "./data/images",
+    uploadDir: join(DATA_DIR, "images"),
     keepExtensions: true,
     maxFileSize: 10 * 1024 * 1024, // 10MB
   });
@@ -50,7 +52,7 @@ export default async function handler(
 
   try {
     // Ensure data/images directory exists
-    const imagesDir = path.join(process.cwd(), "data", "images");
+    const imagesDir = join(DATA_DIR, "images");
     if (!fs.existsSync(imagesDir)) {
       fs.mkdirSync(imagesDir, { recursive: true });
     }
