@@ -1,6 +1,12 @@
 import { db } from "@/database";
-import { posts, users, pictures, translations } from "@/database/schema";
-import { eq, and, desc } from "drizzle-orm";
+import {
+  posts,
+  users,
+  pictures,
+  translations,
+  replies,
+} from "@/database/schema";
+import { eq, and, desc, count, sql } from "drizzle-orm";
 import { translateText } from "./translate-utils";
 
 export interface PostWithTranslation {
@@ -24,6 +30,10 @@ export interface PostWithTranslation {
     content: string;
     language: string;
   } | null;
+}
+
+export interface PostWithReplyCount extends PostWithTranslation {
+  replyCount: number;
 }
 
 /**
@@ -264,4 +274,94 @@ async function createTranslation(
     .returning();
 
   return newTranslation;
+}
+
+/**
+ * Get posts with reply counts - optimized for homepage display
+ */
+export async function getPostsWithReplyCounts(
+  targetLanguage: string,
+): Promise<PostWithReplyCount[]> {
+  try {
+    // Get posts with translations and reply counts in one query
+    const postsWithData = await db
+      .select({
+        id: posts.id,
+        content: posts.content,
+        language: posts.language,
+        created_at: posts.created_at,
+        author: {
+          id: users.id,
+          username: users.username,
+          display_name: users.display_name,
+          picture_id: users.picture_id,
+        },
+        picture: {
+          id: pictures.id,
+          thumbnail_url: pictures.thumbnail_url,
+          original_url: pictures.original_url,
+        },
+        translation: {
+          id: translations.id,
+          content: translations.content,
+          language: translations.language,
+        },
+        replyCount: count(replies.id),
+      })
+      .from(posts)
+      .innerJoin(users, eq(posts.author, users.id))
+      .innerJoin(pictures, eq(posts.picture_id, pictures.id))
+      .leftJoin(
+        translations,
+        and(
+          eq(translations.post_id, posts.id),
+          eq(translations.language, targetLanguage),
+        ),
+      )
+      .leftJoin(replies, eq(replies.post_id, posts.id))
+      .groupBy(posts.id)
+      .orderBy(desc(posts.created_at));
+
+    // Process the results similar to getPostsWithTranslations
+    const postsMap = new Map<number, PostWithReplyCount>();
+
+    for (const post of postsWithData) {
+      if (postsMap.has(post.id)) {
+        continue;
+      }
+
+      // Handle translation logic
+      let translation = null;
+      if (post.language !== targetLanguage && post.translation?.id) {
+        translation = post.translation;
+      } else if (post.language !== targetLanguage) {
+        // Create translation if needed
+        const newTranslation = await createTranslation(
+          post.id,
+          post.content,
+          post.language,
+          targetLanguage,
+        );
+        if (newTranslation) {
+          translation = newTranslation;
+        }
+      }
+
+      postsMap.set(post.id, {
+        id: post.id,
+        content: post.content,
+        language: post.language,
+        created_at: post.created_at,
+        author: post.author,
+        picture: post.picture,
+        translation,
+        replyCount: post.replyCount,
+      });
+    }
+
+    return Array.from(postsMap.values());
+  } catch (error) {
+    console.error("Error fetching posts with reply counts:", error);
+    throw new Error("Failed to fetch posts with reply counts");
+  }
 }

@@ -26,6 +26,7 @@ interface Post {
     content: string;
     language: string;
   };
+  replyCount: number;
 }
 
 export default function Posts() {

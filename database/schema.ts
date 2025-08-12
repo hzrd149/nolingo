@@ -108,6 +108,22 @@ export const replies = sqliteTable(
   ],
 );
 
+export const replyTranslations = sqliteTable(
+  "reply_translations",
+  {
+    id: int("id").primaryKey({ autoIncrement: true }),
+    reply_id: int("reply_id")
+      .notNull()
+      .references(() => replies.id),
+    language: text("language").notNull(), // Target language for translation
+    content: text("content").notNull(), // Translated reply content
+  },
+  (table) => [
+    index("reply_translations_reply_id_idx").on(table.reply_id),
+    index("reply_translations_language_idx").on(table.language),
+  ],
+);
+
 export const vapidKeys = sqliteTable("vapid_keys", {
   id: int("id").primaryKey({ autoIncrement: true }),
   public_key: text("public_key").notNull().unique(), // VAPID public key

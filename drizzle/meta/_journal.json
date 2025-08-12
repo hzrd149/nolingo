@@ -15,6 +15,13 @@
       "when": 1755008548633,
       "tag": "0001_aspiring_the_order",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1755009617371,
+      "tag": "0002_pretty_sunspot",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
-import { getPostsWithTranslations } from "../../../lib/posts";
+import { getPostsWithReplyCounts } from "../../../lib/posts";
 import { authOptions } from "../auth/[...nextauth]";
 
 export default async function handler(
@@ -18,7 +18,7 @@ export default async function handler(
 
     const userLearningLanguage = session.user.learning_language;
 
-    const posts = await getPostsWithTranslations(userLearningLanguage);
+    const posts = await getPostsWithReplyCounts(userLearningLanguage);
     return res.status(200).json({ posts });
   } catch (error) {
     console.error("Error fetching posts:", error);

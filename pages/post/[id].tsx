@@ -1,6 +1,11 @@
 import ISO6391 from "iso-639-1";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import ReplyCard from "@/components/ReplyCard";
+import ReplyForm from "@/components/ReplyForm";
+import { getRepliesWithTranslations } from "@/lib/replies";
 
 interface Post {
   id: number;
@@ -25,12 +30,53 @@ interface Post {
   };
 }
 
-interface PostPageProps {
-  post: Post;
+interface Reply {
+  id: number;
+  post_id: number;
+  content: string;
+  language: string;
+  created_at: string;
+  author: {
+    id: number;
+    username: string;
+    display_name?: string;
+    picture_id?: number;
+  };
+  translation?: {
+    id: number;
+    content: string;
+    language: string;
+  };
 }
 
-export default function PostPage({ post }: PostPageProps) {
+interface PostPageProps {
+  post: Post;
+  initialReplies: Reply[];
+}
+
+export default function PostPage({ post, initialReplies }: PostPageProps) {
   const router = useRouter();
+  const { data: session } = useSession();
+  const [replies, setReplies] = useState<Reply[]>(initialReplies);
+  const [isLoadingReplies, setIsLoadingReplies] = useState(false);
+
+  const handleReplyCreated = async () => {
+    // Refresh replies after a new reply is created
+    if (session?.user?.learning_language) {
+      setIsLoadingReplies(true);
+      try {
+        const response = await fetch(`/api/post/${post.id}/replies`);
+        if (response.ok) {
+          const newReplies = await response.json();
+          setReplies(newReplies);
+        }
+      } catch (error) {
+        console.error("Failed to refresh replies:", error);
+      } finally {
+        setIsLoadingReplies(false);
+      }
+    }
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -159,7 +205,10 @@ export default function PostPage({ post }: PostPageProps) {
             </div>
 
             {/* Post Actions */}
-            <div className="card-actions justify-end">
+            <div className="card-actions justify-between items-center">
+              <span className="text-sm text-base-content/60">
+                {replies.length} {replies.length === 1 ? "reply" : "replies"}
+              </span>
               <button className="btn btn-ghost btn-lg">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -180,6 +229,31 @@ export default function PostPage({ post }: PostPageProps) {
             </div>
           </div>
         </div>
+
+        {/* Reply Form */}
+        <ReplyForm postId={post.id} onReplyCreated={handleReplyCreated} />
+
+        {/* Replies Section */}
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold text-base-content mb-4">
+            Replies{" "}
+            {isLoadingReplies && (
+              <span className="loading loading-spinner loading-sm ml-2"></span>
+            )}
+          </h2>
+
+          {replies.length === 0 ? (
+            <div className="text-center text-base-content/60 py-8">
+              <p>No replies yet. Be the first to reply!</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {replies.map((reply) => (
+                <ReplyCard key={reply.id} reply={reply} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -197,8 +271,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       };
     }
 
-    // Import the posts utility function
+    // Import the posts and replies utility functions
     const { getPostWithTranslation } = await import("@/lib/posts");
+    const { getRepliesWithTranslations } = await import("@/lib/replies");
     const { getServerSession } = await import("next-auth/next");
     const { authOptions } = await import("../api/auth/[...nextauth]");
 
@@ -207,10 +282,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       context.res,
       authOptions,
     );
-    const post = await getPostWithTranslation(
-      postId,
-      session?.user?.learning_language || "en",
-    );
+    
+    const targetLanguage = session?.user?.learning_language || "en";
+    
+    const [post, replies] = await Promise.all([
+      getPostWithTranslation(postId, targetLanguage),
+      getRepliesWithTranslations(postId, targetLanguage),
+    ]);
 
     if (!post) {
       return {
@@ -221,6 +299,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {
         post,
+        initialReplies: replies,
       },
     };
   } catch (error) {

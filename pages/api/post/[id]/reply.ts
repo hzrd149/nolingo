@@ -29,10 +29,17 @@ export default async function handler(
     }
 
     const userId = parseInt(session.user.id);
+    const userLearningLanguage = session.user.learning_language;
     const postId = parseInt(req.query.id as string);
 
     if (isNaN(postId)) {
       return res.status(400).json({ error: "Invalid post ID" });
+    }
+
+    if (!userLearningLanguage) {
+      return res.status(400).json({
+        error: "User must have a learning language set to create replies",
+      });
     }
 
     // Validate request body
@@ -68,8 +75,18 @@ export default async function handler(
       detectedLanguage = detection.language;
     } catch (error) {
       console.error("Language detection failed:", error);
-      // Default to the post's language if detection fails
-      detectedLanguage = post[0].language;
+      return res.status(500).json({
+        error: "Failed to detect reply language",
+      });
+    }
+
+    // Validate that the reply is in the user's learning language
+    if (detectedLanguage !== userLearningLanguage) {
+      return res.status(400).json({
+        error: `Reply must be in ${userLearningLanguage}. Detected language: ${detectedLanguage}`,
+        detectedLanguage,
+        expectedLanguage: userLearningLanguage,
+      });
     }
 
     // Create the reply

@@ -22,13 +22,18 @@ interface Post {
     content: string;
     language: string;
   };
+  replyCount?: number;
 }
 
 interface PostCardProps {
   post: Post;
+  showReplyCount?: boolean;
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({
+  post,
+  showReplyCount = true,
+}: PostCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -98,7 +103,12 @@ export default function PostCard({ post }: PostCardProps) {
           </p>
 
           {/* Post Actions */}
-          <div className="card-actions justify-end">
+          <div className="card-actions justify-between items-center">
+            {showReplyCount && post.replyCount !== undefined && (
+              <span className="text-sm text-base-content/60">
+                {post.replyCount} {post.replyCount === 1 ? "reply" : "replies"}
+              </span>
+            )}
             <button
               className="btn btn-ghost btn-sm"
               onClick={(e) => e.stopPropagation()}
