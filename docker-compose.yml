@@ -9,6 +9,14 @@ services:
       - ./data/translate:/home/libretranslate/.local/share/argos-translate/packages
     ports:
       - 8080:5000
+
+  # spacy:
+  #   build:
+  #     context: ./spacy
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 8000:80
+
   nolingo:
     build:
       context: .
