@@ -1,8 +1,11 @@
-import type { NextConfig } from "next";
+import { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactStrictMode: true,
+  // Enable scroll restoration
+  experimental: {
+    scrollRestoration: true,
+  },
 };
 
 export default nextConfig;

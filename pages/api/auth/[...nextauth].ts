@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
               password: users.password,
               display_name: users.display_name,
               learning_language: users.learning_language,
-              theme: users.theme,
+              is_admin: users.is_admin,
             })
             .from(users)
             .where(eq(users.username, credentials.username))
@@ -51,7 +51,7 @@ export const authOptions: NextAuthOptions = {
               username: foundUser.username,
               display_name: foundUser.display_name || undefined,
               learning_language: foundUser.learning_language || undefined,
-              theme: foundUser.theme || undefined,
+              is_admin: foundUser.is_admin || 0,
             };
           }
 
@@ -75,7 +75,8 @@ export const authOptions: NextAuthOptions = {
         token.username = user.username;
         token.display_name = user.display_name;
         token.learning_language = user.learning_language;
-        token.theme = user.theme;
+        token.userId = user.id;
+        token.is_admin = user.is_admin;
       }
       return token;
     },
@@ -84,7 +85,8 @@ export const authOptions: NextAuthOptions = {
         session.user.username = token.username;
         session.user.display_name = token.display_name;
         session.user.learning_language = token.learning_language;
-        session.user.theme = token.theme;
+        session.user.id = token.userId;
+        session.user.is_admin = token.is_admin;
       }
       return session;
     },

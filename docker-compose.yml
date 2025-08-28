@@ -3,9 +3,38 @@ version: "3"
 services:
   libretranslate:
     image: libretranslate/libretranslate:latest
-    tty: true
-    stdin_open: true
+    restart: unless-stopped
     volumes:
       - ./data/translate:/home/libretranslate/.local/share/argos-translate/packages
+
+  piper:
+    image: ghcr.io/hzrd149/docker-piper-http:master
+    restart: unless-stopped
+    volumes:
+      - ./data/piper:/voices
+
+  kokoro:
+    image: ghcr.io/remsky/kokoro-fastapi-cpu:latest
+    restart: unless-stopped
+
+  nolingo:
+    # image: ghcr.io/hzrd149/nolingo:master
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
-      - 8080:5000
+      - 3000:3000
+    volumes:
+      - ./data/nolingo:/app/data
+    environment:
+      DATA_DIR: /app/data
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
+      LIBRETRANSLATE_API: http://libretranslate:5000
+      PIPER_API: http://piper:5000
+      KOKORO_API: http://kokoro:8880
+      DEEPL_API_KEY: ${DEEPL_API_KEY:-}
+      AI_CORRECTIONS_API_URL: ${AI_CORRECTIONS_API_URL:-}
+      AI_CORRECTIONS_API_KEY: ${AI_CORRECTIONS_API_KEY:-}
+      AI_CORRECTIONS_MODEL: ${AI_CORRECTIONS_MODEL:-}

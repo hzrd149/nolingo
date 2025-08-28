@@ -6,6 +6,6 @@ export default defineConfig({
   schema: "./database/schema.ts",
   dialect: "sqlite",
   dbCredentials: {
-    url: process.env.DATABASE!,
+    url: "file:data/nolingo/database.sqlite",
   },
 });

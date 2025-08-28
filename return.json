@@ -1,0 +1,34 @@
+{
+  "de_DE-thorsten-medium": {
+    "audio": { "quality": "medium", "sample_rate": 22050 },
+    "dataset": "thorsten",
+    "espeak": { "voice": "de" },
+    "inference": { "length_scale": 1, "noise_scale": 0.667, "noise_w": 0.8 },
+    "language": {
+      "code": "de_DE",
+      "country_english": "Germany",
+      "family": "de",
+      "name_english": "German",
+      "name_native": "Deutsch",
+      "region": "DE"
+    },
+    "num_speakers": 1,
+    "num_symbols": 256
+  },
+  "en_US-lessac-medium": {
+    "audio": { "quality": "medium", "sample_rate": 22050 },
+    "dataset": "lessac",
+    "espeak": { "voice": "en-us" },
+    "inference": { "length_scale": 1, "noise_scale": 0.667, "noise_w": 0.8 },
+    "language": {
+      "code": "en_US",
+      "country_english": "United States",
+      "family": "en",
+      "name_english": "English",
+      "name_native": "English",
+      "region": "US"
+    },
+    "num_speakers": 1,
+    "num_symbols": 256
+  }
+}
