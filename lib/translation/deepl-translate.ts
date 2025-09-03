@@ -1,4 +1,5 @@
 import * as deepl from "deepl-node";
+import { mapToDeepLLanguageCode } from "../utils/language";
 
 interface DeepLConfig {
   apiKey: string;
@@ -37,10 +38,20 @@ export class DeepLService {
     sourceLang?: string,
   ): Promise<string> {
     try {
+      // Map language codes to DeepL-compatible format
+      const mappedTargetLang = mapToDeepLLanguageCode(targetLang, true);
+      const mappedSourceLang = sourceLang
+        ? mapToDeepLLanguageCode(sourceLang, false)
+        : null;
+
+      console.log(
+        `DeepL translation: ${sourceLang || "auto"} -> ${targetLang} (mapped: ${mappedSourceLang || "auto"} -> ${mappedTargetLang})`,
+      );
+
       const result = await this.client.translateText(
         text,
-        (sourceLang as deepl.SourceLanguageCode) || null, // DeepL auto-detects when null
-        targetLang as deepl.TargetLanguageCode,
+        (mappedSourceLang as deepl.SourceLanguageCode) || null, // DeepL auto-detects when null
+        mappedTargetLang as deepl.TargetLanguageCode,
       );
 
       return result.text;
