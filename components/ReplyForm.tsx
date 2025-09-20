@@ -1,7 +1,6 @@
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { ErrorIcon } from "./Icons";
-import LanguageWarningModal from "./ui/LanguageWarningModal";
 import TextareaWithHint from "./ui/TextareaWithHint";
 import { getLanguageName } from "../lib/utils/language";
 
@@ -15,11 +14,6 @@ export default function ReplyForm({ postId, onReplyCreated }: ReplyFormProps) {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showLanguageWarning, setShowLanguageWarning] = useState(false);
-  const [detectedLanguage, setDetectedLanguage] = useState("");
-  const [pendingSubmission, setPendingSubmission] = useState<
-    (() => void) | null
-  >(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,37 +28,7 @@ export default function ReplyForm({ postId, onReplyCreated }: ReplyFormProps) {
       return;
     }
 
-    // Check if content is in the learning language
-    if (content.trim() && session?.user?.learning_language) {
-      try {
-        const response = await fetch("/api/translation/detect", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ text: content.trim() }),
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          const detectedLang = result.language.toLowerCase();
-          const learningLang = session.user.learning_language.toLowerCase();
-
-          // Check if detected language matches learning language
-          if (detectedLang !== learningLang) {
-            setDetectedLanguage(result.language);
-            setShowLanguageWarning(true);
-            setPendingSubmission(() => () => submitReply());
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("Language detection failed:", error);
-        // Continue with submission if language detection fails
-      }
-    }
-
-    // If no language warning needed, submit directly
+    // Submit the reply directly
     await submitReply();
   };
 
@@ -148,22 +112,6 @@ export default function ReplyForm({ postId, onReplyCreated }: ReplyFormProps) {
         </div>
       </form>
 
-      <LanguageWarningModal
-        isOpen={showLanguageWarning}
-        onClose={() => {
-          setShowLanguageWarning(false);
-          setPendingSubmission(null);
-        }}
-        onPostAnyway={() => {
-          setShowLanguageWarning(false);
-          if (pendingSubmission) {
-            pendingSubmission();
-          }
-        }}
-        detectedLanguage={detectedLanguage}
-        learningLanguage={session?.user?.learning_language || ""}
-        content={content}
-      />
     </div>
   );
 }

@@ -5,7 +5,6 @@ import {
   translateWithFallback,
   TranslationProvider,
 } from "./provider-selection";
-import { detectLanguage as detectLanguageCore } from "./detect-language";
 import { createLibreTranslateService } from "./libretranslate";
 
 /**
@@ -40,34 +39,7 @@ export async function translateTextWithProvider(
   return await translateWithFallback(text, targetLang, sourceLang);
 }
 
-/**
- * Simple function to detect the language of text
- * Always uses LibreTranslate as DeepL doesn't provide language detection
- * @param text - Text to analyze
- * @returns Promise<{language: string, confidence: number}> - Detected language and confidence
- */
-export async function detectLanguage(
-  text: string,
-): Promise<{ language: string; confidence: number }> {
-  return await detectLanguageCore(text);
-}
 
-/**
- * Translate text with auto-detection of source language
- * @param text - Text to translate
- * @param targetLang - Target language code
- * @returns Promise<string> - Translated text
- */
-export async function translateWithAutoDetect(
-  text: string,
-  targetLang: string,
-): Promise<string> {
-  // First detect the source language
-  const detection = await detectLanguage(text);
-
-  // Then translate
-  return translateText(text, targetLang, detection.language);
-}
 
 /**
  * Get all supported languages from LibreTranslate
@@ -127,4 +99,3 @@ export type {
   TranslateRequest as DeepLTranslateRequest,
   TranslateResponse as DeepLTranslateResponse,
 } from "./deepl-translate";
-export type { DetectRequest, DetectResponse } from "./detect-language";

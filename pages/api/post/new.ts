@@ -1,6 +1,5 @@
 import { db } from "@/database";
 import { pictures, posts, users } from "@/database/schema";
-import { detectLanguage } from "@/lib/translation";
 import { eq } from "drizzle-orm";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
@@ -63,16 +62,8 @@ export default async function handler(
       return res.status(403).json({ error: "Picture does not belong to user" });
     }
 
-    // Detect the language of the post content
-    let detectedLanguage: string;
-    try {
-      const detection = await detectLanguage(content);
-      detectedLanguage = detection.language;
-    } catch (error) {
-      console.error("Language detection failed:", error);
-      // If language detection fails, use the user's learning language as fallback
-      detectedLanguage = userLearningLanguage;
-    }
+    // Use the user's learning language for the post
+    const postLanguage = userLearningLanguage;
 
     // Create the post
     const newPost = await db
@@ -81,7 +72,7 @@ export default async function handler(
         author: userId,
         content,
         picture_id,
-        language: userLearningLanguage || detectedLanguage,
+        language: postLanguage,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -105,7 +96,7 @@ export default async function handler(
       newPost[0].id,
       authorName,
       content,
-      detectedLanguage,
+      postLanguage,
     ).catch((error) => {
       console.error("Failed to send new post notification:", error);
       // Don't fail the request if notification fails

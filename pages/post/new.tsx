@@ -3,7 +3,6 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import LanguageWarningModal from "../../components/ui/LanguageWarningModal";
 import TextareaWithHint from "../../components/ui/TextareaWithHint";
 import { getLanguageName } from "../../lib/utils/language";
 
@@ -29,11 +28,6 @@ export default function NewPost() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [showLanguageWarning, setShowLanguageWarning] = useState(false);
-  const [detectedLanguage, setDetectedLanguage] = useState("");
-  const [pendingSubmission, setPendingSubmission] = useState<
-    (() => void) | null
-  >(null);
 
   // Show loading state while session is loading
   if (status === "loading") {
@@ -66,38 +60,6 @@ export default function NewPost() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Check if content is in the learning language
-    if (content.trim() && session?.user?.learning_language) {
-      try {
-        const response = await fetch("/api/translation/detect", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ text: content.trim() }),
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          const detectedLang = result.language.toLowerCase();
-          const learningLang = session.user.learning_language.toLowerCase();
-
-          // Check if detected language matches learning language
-          if (detectedLang !== learningLang) {
-            setDetectedLanguage(result.language);
-            setShowLanguageWarning(true);
-            setPendingSubmission(() => () => submitPost());
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("Language detection failed:", error);
-        // Continue with submission if language detection fails
-      }
-    }
-
-    // If no language warning needed, submit directly
     await submitPost();
   };
 
@@ -175,17 +137,6 @@ export default function NewPost() {
     }
   };
 
-  const handlePostAnyway = () => {
-    setShowLanguageWarning(false);
-    if (pendingSubmission) {
-      pendingSubmission();
-    }
-  };
-
-  const handleCancelWarning = () => {
-    setShowLanguageWarning(false);
-    setPendingSubmission(null);
-  };
 
   return (
     <>
@@ -311,14 +262,6 @@ export default function NewPost() {
         </div>
       </div>
 
-      <LanguageWarningModal
-        isOpen={showLanguageWarning}
-        onClose={handleCancelWarning}
-        onPostAnyway={handlePostAnyway}
-        detectedLanguage={detectedLanguage}
-        learningLanguage={session?.user?.learning_language || ""}
-        content={content}
-      />
     </>
   );
 }

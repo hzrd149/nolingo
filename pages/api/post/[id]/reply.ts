@@ -1,6 +1,5 @@
 import { db } from "@/database";
 import { replies, posts, users } from "@/database/schema";
-import { detectLanguage } from "@/lib/translation";
 import { eq } from "drizzle-orm";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
@@ -68,16 +67,8 @@ export default async function handler(
       return res.status(404).json({ error: "Post not found" });
     }
 
-    // Detect the language of the reply content
-    let detectedLanguage: string;
-    try {
-      const detection = await detectLanguage(content);
-      detectedLanguage = detection.language;
-    } catch (error) {
-      console.error("Language detection failed:", error);
-      // If language detection fails, use the user's learning language as fallback
-      detectedLanguage = userLearningLanguage;
-    }
+    // Use the user's learning language for the reply
+    const replyLanguage = userLearningLanguage;
 
     // Create the reply
     const newReply = await db
@@ -86,7 +77,7 @@ export default async function handler(
         post_id: postId,
         author: userId,
         content,
-        language: detectedLanguage,
+        language: replyLanguage,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -115,7 +106,7 @@ export default async function handler(
         post[0].author,
         replyAuthorName,
         content,
-        detectedLanguage,
+        replyLanguage,
       ).catch((error: any) => {
         console.error("Failed to send reply notification:", error);
         // Don't fail the request if notification fails
