@@ -32,7 +32,7 @@ export default function NewPost() {
   // Show loading state while session is loading
   if (status === "loading") {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-4xl">
         <div className="flex justify-center items-center h-64">
           <span className="loading loading-spinner loading-lg"></span>
         </div>
@@ -137,131 +137,183 @@ export default function NewPost() {
     }
   };
 
-
   return (
     <>
       <Head>
         <title>Create New Post - Nolingo</title>
       </Head>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h1 className="card-title text-2xl mb-6">Create New Post</h1>
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-4xl">
+        <h1 className="card-title text-xl sm:text-2xl mb-4 sm:mb-6">
+          Create New Post
+        </h1>
 
-            {error && (
-              <div className="alert alert-error mb-4">
-                <span>{error}</span>
-              </div>
-            )}
+        {error && (
+          <div className="alert alert-error mb-4">
+            <span>{error}</span>
+          </div>
+        )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Image Upload Section */}
-              <div className="form-control">
-                <label className="label">Image</label>
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+          {/* Image Upload Section */}
+          <div className="form-control">
+            <label className="label">Image</label>
 
-                {!uploadedImage ? (
-                  <div className="space-y-3">
-                    <input
-                      id="image-input"
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      onChange={handleFileSelect}
-                      className="file-input file-input-bordered file-input-primary w-full"
+            {!uploadedImage ? (
+              <div className="space-y-3">
+                <div className="space-y-3">
+                  <input
+                    id="image-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="file-input file-input-bordered file-input-primary w-full"
+                    disabled={isSubmitting}
+                  />
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.accept = "image/*";
+                        input.capture = "environment";
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement)
+                            .files?.[0];
+                          if (file) {
+                            const fileInput = document.getElementById(
+                              "image-input",
+                            ) as HTMLInputElement;
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                            fileInput.files = dataTransfer.files;
+                            handleFileSelect({
+                              target: { files: dataTransfer.files },
+                            } as any);
+                          }
+                        };
+                        input.click();
+                      }}
+                      className="btn shrink-0"
                       disabled={isSubmitting}
-                    />
-
-                    {previewUrl && (
-                      <div className="space-y-3">
-                        <div className="relative w-full">
-                          <Image
-                            src={previewUrl}
-                            alt="Preview"
-                            width={800}
-                            height={600}
-                            className="w-full h-auto rounded-lg border border-base-300"
-                          />
-                        </div>
-                      </div>
-                    )}
+                    >
+                      📷 Take Photo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const fileInput = document.getElementById(
+                          "image-input",
+                        ) as HTMLInputElement;
+                        fileInput.click();
+                      }}
+                      className="btn shrink-0"
+                      disabled={isSubmitting}
+                    >
+                      🖼️ Choose from Library
+                    </button>
                   </div>
-                ) : (
+                </div>
+
+                {previewUrl && (
                   <div className="space-y-3">
-                    <div className="relative w-full">
+                    <div className="relative w-full max-w-md mx-auto sm:max-w-full">
                       <Image
-                        src={uploadedImage.original_url}
-                        alt="Uploaded image"
+                        src={previewUrl}
+                        alt="Preview"
                         width={800}
                         height={600}
-                        className="w-full h-auto rounded-lg border border-base-300"
+                        className="w-full h-auto rounded-lg border border-base-300 max-h-64 sm:max-h-96 object-cover"
                       />
-                    </div>
-                    <div className="text-center">
                       <button
                         type="button"
                         onClick={handleReset}
-                        className="link link-primary text-sm"
+                        className="absolute top-2 right-2 btn btn-circle btn-sm btn-error"
+                        title="Remove image"
                       >
-                        Reset image
+                        ✕
                       </button>
                     </div>
                   </div>
                 )}
               </div>
-
-              {/* Content Description */}
-              <div className="form-control">
-                <label className="label">
-                  Description
-                  <span className="label">{content.length}/256 characters</span>
-                </label>
-                <TextareaWithHint
-                  value={content}
-                  onChange={setContent}
-                  placeholder={`Describe what you see in this image in ${getLanguageName(session?.user?.learning_language)}...`}
-                  maxLength={256}
-                  className="textarea textarea-bordered h-32 w-full"
-                  disabled={isSubmitting}
-                  required
-                />
-                <label className="label">
-                  <span className="label-text-alt">
-                    Describe the image, objects, actions, or scene you see
-                  </span>
-                </label>
+            ) : (
+              <div className="space-y-3">
+                <div className="relative w-full max-w-md mx-auto sm:max-w-full">
+                  <Image
+                    src={uploadedImage.original_url}
+                    alt="Uploaded image"
+                    width={800}
+                    height={600}
+                    className="w-full h-auto rounded-lg border border-base-300 max-h-64 sm:max-h-96 object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="absolute top-2 right-2 btn btn-circle btn-sm btn-error"
+                    title="Remove image"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
-
-              {/* Action Buttons */}
-              <div className="card-actions justify-end">
-                <button
-                  type="button"
-                  className="btn btn-ghost"
-                  onClick={() => router.back()}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={
-                    isSubmitting ||
-                    !content.trim() ||
-                    (!previewUrl && !uploadedImage)
-                  }
-                >
-                  {isSubmitting
-                    ? "Creating..."
-                    : previewUrl && !uploadedImage
-                      ? "Upload & Create Post"
-                      : "Create Post"}
-                </button>
-              </div>
-            </form>
+            )}
           </div>
-        </div>
-      </div>
 
+          {/* Content Description */}
+          <div className="form-control">
+            <label className="label flex-col sm:flex-row items-start sm:items-center">
+              <span className="label-text text-base font-medium">
+                Description
+              </span>
+              <span className="label-text-alt text-sm opacity-70">
+                {content.length}/256 characters
+              </span>
+            </label>
+            <TextareaWithHint
+              value={content}
+              onChange={setContent}
+              placeholder={`Describe what you see in this image in ${getLanguageName(session?.user?.learning_language)}...`}
+              maxLength={256}
+              className="textarea textarea-bordered h-24 sm:h-32 w-full text-base"
+              disabled={isSubmitting}
+              required
+            />
+            <label className="label">
+              <span className="label-text-alt text-sm">
+                Describe the image, objects, actions, or scene you see
+              </span>
+            </label>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="card-actions flex justify-between gap-3">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => router.back()}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={
+                isSubmitting ||
+                !content.trim() ||
+                (!previewUrl && !uploadedImage)
+              }
+            >
+              {isSubmitting
+                ? "Creating..."
+                : previewUrl && !uploadedImage
+                  ? "Upload & Create Post"
+                  : "Create Post"}
+            </button>
+          </div>
+        </form>
+      </div>
     </>
   );
 }
